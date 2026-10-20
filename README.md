@@ -151,85 +151,59 @@ npm run preview
 
 ## 发布到 InternRobotics 的 GitHub Pages
 
-目标仓库：`InternRobotics/internw0-page`。
-目标网址：https://internrobotics.github.io/internw0-page/ 。
+正式网址保持为：https://internrobotics.github.io/internw0/ 。
 
-已提供 `.github/workflows/deploy-pages.yml`：推送到 `main` 后，使用 Node.js 22 和
+| 用途 | 仓库 | 本地目录 |
+| --- | --- | --- |
+| 网页源码、图片和视频 | `InternRobotics/internw0-page` | `W0-Homepage-source/` |
+| 模型仓库与正式主页发布工作流 | `InternRobotics/internw0` | `InternW0/` |
+
+正式主页由模型仓库的 `.github/workflows/deploy-homepage.yml` 发布。
+每次运行时拉取 `internw0-page` 的 `main` 分支，使用 Node.js 22 和
 `package.json` 指定的 pnpm 版本安装依赖、检查代码、构建并发布 `out/`。
-构建时根据 GitHub 仓库名自动设置 `NEXT_PUBLIC_BASE_PATH`；仓库名为 `internw0-page` 时，
-路径为 `/internw0-page`，使样式、图片和视频使用正确的子路径。
-本地 `npm run dev` 不需要设置这个变量。
+构建时从 GitHub Pages 元数据读取 `NEXT_PUBLIC_BASE_PATH`，确保样式、图片和视频
+使用正式站点的 `/internw0` 路径。网页源码和素材无需复制到模型仓库。
 
-### 仓库改名后重新发布
+首次配置时，模型仓库名称需使用小写 `internw0`，以匹配原网址；
+在该仓库的 Settings → Pages → Build and deployment 中，将 Source 设为
+**GitHub Actions**，再运行 **Publish InternW0 Homepage**。
+这些设置需要仓库管理权限，单靠 Git 推送无法修改。
 
-仓库已从 `InternRobotics/internw0` 改名为 `InternRobotics/internw0-page`。
-改名会改变 Pages 的项目路径，但不会自动重新构建已发布的静态文件。
-旧构建仍引用 `/internw0/` 下的资源，导致新页面的样式、脚本、图片和视频加载失败。
-在本项目目录更新远程地址：
-
-```bash
-git remote set-url origin git@github.com:InternRobotics/internw0-page.git
-```
-
-确认仓库的 Settings → Pages → Source 仍为 GitHub Actions。
-推送一次新提交，或进入 Actions → Deploy InternW0 to GitHub Pages → Run workflow，
-选择 `main`，发起一次新的部署。工作流会自动按新仓库名使用 `/internw0-page`。
-等待 build 和 deploy 均成功后再访问新地址。旧的 Pages 网址不会因仓库重命名而自动跳转，
-对外分享请使用新网址。本地文件夹名 `W0-Homepage-source` 不影响线上地址。
-
-### 首次发布
-
-1. 在 https://github.com/new 新建仓库，Owner 选择 `InternRobotics`，
-   Repository name 填 `internw0-page`，选择 Public。
-   为直接推送现有项目，保持仓库为空，不勾选初始化 README、.gitignore 或 License。
-   如果不能选择组织或 Public，请组织管理员代建仓库，并授予你仓库管理权限。
-2. 在新仓库进入 Settings → Pages → Build and deployment，将 Source 设为 **GitHub Actions**。
-   如果空仓库暂时无法设置，完成下一步后再设置，并在 Actions 中重新运行部署任务。
-3. 在本地项目目录执行以下命令。它们适用于首次上传到新建的空仓库；
-   将本目录的内容放在远程仓库根目录，不要额外套一层 `W0-Homepage-source/`。
-
-```bash
-cd /home/xue/A15_Homepage-source/W0-Homepage-source
-git init -b main
-git add .
-git commit -m "Create InternW0 homepage"
-git remote add origin git@github.com:InternRobotics/internw0-page.git
-git push -u origin main
-```
-
-4. 在仓库 Actions 中打开 **Deploy InternW0 to GitHub Pages**，等待 build 和 deploy 成功。
-   然后访问目标网址。也可以在该工作流页面点击 Run workflow，选择 `main` 手动发布。
-
-`.gitignore` 已排除 `node_modules/`、`.next/` 和 `out/`；GitHub Actions 会自行构建。
-上传素材使用本项目 `public/` 内的网页版本，六个视频均小于 Git 单文件 100 MiB 上限。
-其中主视频和 MoF 的第二个短视频超过网页上传的 25 MiB 上限，因此使用上面的 Git 推送命令。
-组织成员能否新建仓库取决于组织设置；配置 Pages 需要仓库的 Admin 或 Maintainer 权限。
+本源码仓库原有的 `.github/workflows/deploy-pages.yml` 继续发布
+https://internrobotics.github.io/internw0-page/ ，用于检查源码更新。
+它只负责该预览地址；正式主页由模型仓库的工作流单独发布。
 
 ### 后续更新
 
-修改文案或素材后，在本项目目录执行：
+修改文案或素材后，在网页源码目录执行：
 
 ```bash
+cd /home/xue/A15_Homepage-source/W0-Homepage-source
 git add .
 git commit -m "Update InternW0 homepage"
 git push
 ```
 
-每次推送 `main` 都会自动重新发布。如果组织要求通过 Pull Request 修改 `main`，
-在工作分支提交并发起 PR，合并后触发发布。
+随后打开模型仓库的
+[Publish InternW0 Homepage](https://github.com/InternRobotics/internw0/actions/workflows/deploy-homepage.yml)，
+点击 **Run workflow**，选择 `main`，等待 `build` 和 `deploy` 均成功。
+正式主页才会更新到这次运行拉取的源码版本。
 
-如需在本地生成与线上路径一致的静态文件：
+两个仓库之间没有配置自动触发：只推送 `internw0-page` 会更新预览地址，
+还需要手动运行模型仓库的工作流来更新 `/internw0/`。
+修改模型仓库中发布工作流本身并推送到 `main`，也会触发一次正式发布。
+
+如需在本地生成与正式网址路径一致的静态文件：
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/internw0-page npm run build
+NEXT_PUBLIC_BASE_PATH=/internw0 npm run build
 ```
 
-上述构建产物的资源路径包含 `/internw0-page`，预览时需将 `out/` 挂载到该子路径。
+上述构建产物的资源路径包含 `/internw0`，预览时需将 `out/` 挂载到该子路径。
 如需使用前面的 `npm run preview`，先执行不带该环境变量的 `npm run build`。
-重命名项目仓库后发起一次新的工作流运行即可使用新路径；部署到自定义路径时再调整工作流的 `NEXT_PUBLIC_BASE_PATH`。
-该项目为静态导出，不使用 `next start` 启动生产服务。
+本地 `npm run dev` 不需要设置这个变量。该项目为静态导出，不使用 `next start` 启动生产服务。
+`.gitignore` 已排除 `node_modules/`、`.next/` 和 `out/`；GitHub Actions 会自行构建。
+上传素材只需推送本项目 `public/` 内的网页版本。
 
 官方说明：[GitHub Pages 项目站点](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)、
-[发布源设置](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)、
-[组织仓库创建权限](https://docs.github.com/en/organizations/managing-organization-settings/restricting-repository-creation-in-your-organization)、
-[文件大小限制](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)。
+[发布源设置](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
