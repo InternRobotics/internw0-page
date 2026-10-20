@@ -103,7 +103,7 @@ export const heroActions: { label: string; href: string | null }[] = [
   },
   {
     "label": "Github",
-    "href": null
+    "href": "https://github.com/InternRobotics/InternW0"
   },
   {
     "label": "Huggingface",
