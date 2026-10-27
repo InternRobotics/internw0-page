@@ -30,16 +30,6 @@ const actionIcons: Record<string, React.ReactNode> = {
       width={16}
     />
   ),
-  ModelScope: (
-    <Image
-      alt=""
-      aria-hidden="true"
-      className="size-4 shrink-0 object-contain"
-      height={16}
-      src={assetPath("/images/modelscope-logo.svg")}
-      width={16}
-    />
-  ),
 };
 
 export function HeroSection() {
