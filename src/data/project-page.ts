@@ -107,11 +107,7 @@ export const heroActions: { label: string; href: string | null }[] = [
   },
   {
     "label": "Huggingface",
-    "href": null
-  },
-  {
-    "label": "ModelScope",
-    "href": null
+    "href": "https://huggingface.co/collections/InternRobotics/nternw0"
   },
   {
     "label": "BibTeX",
